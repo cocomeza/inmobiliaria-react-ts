@@ -24,7 +24,7 @@ fs.mkdirSync(UPLOADS_DIR, { recursive: true })
 // Configuración CORS para producción
 const corsOptions = {
   origin: isProduction 
-    ? ['https://your-vercel-app.vercel.app', 'https://inmobiliaria-diego-nadal.vercel.app']
+    ? ['https://inmobiliaria-frontend.onrender.com', /\.onrender\.com$/]
     : ['http://localhost:5000', 'http://localhost:5001'],
   credentials: true,
   optionsSuccessStatus: 200

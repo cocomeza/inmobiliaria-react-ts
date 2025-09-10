@@ -1,0 +1,35 @@
+services:
+  # Frontend (React/Vite)
+  - type: web
+    name: inmobiliaria-frontend
+    env: node
+    buildCommand: cd client && npm install && npm run build
+    startCommand: cd client && npm run preview -- --host 0.0.0.0 --port $PORT
+    rootDir: ./
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: inmobiliaria-backend
+          property: host
+
+  # Backend (Node.js/Express) 
+  - type: web
+    name: inmobiliaria-backend
+    env: node
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    rootDir: ./
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: inmobiliaria2024

@@ -3,15 +3,16 @@ import { useRoute } from 'wouter'
 import { Container, Row, Col, Carousel } from 'react-bootstrap'
 import data from '../data/properties.json'
 import type { PropertyItem } from '../components/PropertyCard'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import L from 'leaflet'
+// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+// import { icon } from 'leaflet'
 
-const defaultIcon = new L.Icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconAnchor: [12, 41],
-  popupAnchor: [0, -28],
-})
+// Temporalmente deshabilitado el mapa para resolver errores de build
+// const defaultIcon = icon({
+//   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+//   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+//   iconAnchor: [12, 41],
+//   popupAnchor: [0, -28],
+// })
 
 export default function PropertyDetail() {
   const [, params] = useRoute('/propiedad/:id')
@@ -80,13 +81,14 @@ export default function PropertyDetail() {
         <Col md={5}>
           <h1 className="h3">{item.title}</h1>
           <div className="mb-3">{new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(item.priceUsd)}</div>
-          <div className="ratio ratio-4x3 rounded overflow-hidden">
-            <MapContainer center={[-31.741, -60.523]} zoom={13} style={{ width: '100%', height: '100%' }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <Marker position={[-31.741, -60.523]} icon={defaultIcon}>
-                <Popup>Ubicación aproximada</Popup>
-              </Marker>
-            </MapContainer>
+          <div className="ratio ratio-4x3 rounded overflow-hidden bg-light d-flex align-items-center justify-content-center">
+            <div className="text-center text-muted">
+              <div className="mb-2">
+                <i className="fas fa-map-marker-alt fa-3x"></i>
+              </div>
+              <h6>Ubicación</h6>
+              <p className="small mb-0">Esperanza, Santa Fe, Argentina</p>
+            </div>
           </div>
         </Col>
       </Row>
