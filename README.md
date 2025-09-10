@@ -6,9 +6,10 @@ Una aplicación web completa para gestionar propiedades inmobiliarias, desarroll
 
 - **🏡 Catálogo de Propiedades**: Muestra todas las propiedades disponibles con imágenes, precios y detalles
 - **🔧 Panel de Administración**: Gestiona propiedades fácilmente (crear, editar, eliminar)
+- **🔐 Autenticación Segura**: Login protegido con JWT para acceder al panel de admin
 - **📸 Subida de Imágenes**: Agrega fotos a tus propiedades
 - **💰 Filtros de Búsqueda**: Los usuarios pueden filtrar por precio, tipo, etc.
-- **📱 Diseño Responsivo**: Funciona perfectamente en móviles y tablets
+- **📱 Diseño Responsivo**: Funciona perfectamente en móviles, tablets, notebooks y PCs
 - **🗺️ Mapas Interactivos**: Muestra la ubicación de las propiedades
 - **📞 Contacto Directo**: Botón de WhatsApp y formulario de contacto
 
@@ -27,6 +28,7 @@ Una aplicación web completa para gestionar propiedades inmobiliarias, desarroll
 - **Node.js** - Entorno de ejecución JavaScript
 - **Express.js** - Framework web para APIs
 - **TypeScript** - Para código más seguro
+- **JWT (jsonwebtoken)** - Autenticación segura con tokens
 - **Multer** - Manejo de archivos subidos
 - **CORS** - Permite conexiones entre dominios
 
@@ -73,7 +75,7 @@ Esto va a iniciar:
 ### 4. Acceder a la Aplicación
 
 - **Página Principal**: Abrí tu navegador y andá a `http://localhost:5000`
-- **Panel de Admin**: Andá a `http://localhost:5000/admin`
+- **Panel de Admin**: Andá a `http://localhost:5000/admin` (requiere login)
 
 ## 📖 Cómo Usar la Aplicación
 
@@ -84,8 +86,17 @@ Esto va a iniciar:
 4. **Contactar**: Usá el formulario de contacto o el botón de WhatsApp flotante
 
 ### Para Administradores (Panel de Admin)
-1. **Acceder**: Andá a `http://localhost:5000/admin`
-2. **Ver Propiedades**: Vas a ver una tabla con todas las propiedades existentes
+
+#### 🔐 Acceso al Panel de Administración
+1. **Ir al Login**: Andá a `http://localhost:5000/admin` (serás redirigido automáticamente al login)
+2. **Credenciales de Acceso**:
+   - **Usuario**: `admin`
+   - **Contraseña**: `inmobiliaria2024`
+3. **Iniciar Sesión**: Completá el formulario y hacé click en "Ingresar"
+4. **Panel de Admin**: Una vez autenticado, tendrás acceso completo para gestionar propiedades
+
+#### Gestión de Propiedades
+Después de iniciar sesión, vas a ver una tabla con todas las propiedades existentes y podrás:
 
 #### Crear Nueva Propiedad
 1. Hacé click en **"Nueva propiedad"**
@@ -236,10 +247,34 @@ npm run preview
 
 ## 🔒 Seguridad
 
-**Importante para Producción:**
-- El panel de admin no tiene autenticación por defecto
-- Las imágenes se guardan sin restricciones de tipo
-- Para uso real, considerá agregar login y validaciones adicionales
+### ✅ Características de Seguridad Implementadas
+- **🔐 Autenticación JWT**: El panel de admin está protegido con login seguro
+- **🛡️ Rutas Protegidas**: Solo usuarios autenticados pueden crear, editar o eliminar propiedades
+- **⏰ Tokens con Expiración**: Los tokens de autenticación expiran después de 24 horas
+- **🚪 Logout Seguro**: Función de cierre de sesión que limpia todos los datos
+
+### 🔧 Configuración de Seguridad para Producción
+
+**Para mayor seguridad en producción, considerá:**
+
+1. **Cambiar Credenciales por Defecto**:
+   ```bash
+   # Variables de entorno recomendadas
+   ADMIN_USERNAME=tu_usuario_seguro
+   ADMIN_PASSWORD=tu_contraseña_muy_segura
+   JWT_SECRET=tu_clave_secreta_muy_larga_y_compleja
+   ```
+
+2. **Configuraciones Adicionales**:
+   - Usar HTTPS en producción
+   - Configurar CORS para dominios específicos
+   - Agregar límites de intentos de login
+   - Implementar logs de auditoría
+
+### 🛡️ Credenciales por Defecto
+- **Usuario**: `admin`
+- **Contraseña**: `inmobiliaria2024`
+- **Recomendación**: ¡Cambiá estas credenciales antes de poner la aplicación en producción!
 
 ## 📞 Soporte y Ayuda
 
