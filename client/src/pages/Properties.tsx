@@ -23,15 +23,15 @@ export default function Properties() {
   }, [items, filters])
 
   return (
-    <Container className="py-5">
-      <h1 className="mb-4">Propiedades</h1>
+    <Container className="py-4 py-md-5">
+      <h1 className="mb-3 mb-md-4 text-center text-md-start">Propiedades</h1>
       <div className="mb-4">
         <Filters value={filters} onChange={setFilters} />
       </div>
 
-      <Row className="g-4">
+      <Row className="g-3 g-md-4">
         {filtered.map((p) => (
-          <Col key={p.id} md={6} lg={4}>
+          <Col key={p.id} xs={12} sm={6} lg={4}>
             <PropertyCard item={p} />
           </Col>
         ))}

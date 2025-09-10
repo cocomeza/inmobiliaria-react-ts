@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Button, Col, Container, Form, Row, Table, Navbar, Nav } from 'react-bootstrap'
+import { Button, Col, Container, Form, Row, Table, Navbar, Nav, Badge, Card } from 'react-bootstrap'
 import { useAuth } from '../hooks/useAuth'
 import { useLocation } from 'wouter'
 
@@ -168,86 +168,228 @@ export default function Admin() {
         </Container>
       </Navbar>
 
-      <Container className="py-3">
-        <Row className="align-items-center mb-3">
-          <Col><h1 className="mb-0">Panel de administración</h1></Col>
-          <Col xs="auto"><Button onClick={startNew}>Nueva propiedad</Button></Col>
+      <Container className="py-3 py-md-4">
+        <Row className="align-items-center mb-3 mb-md-4">
+          <Col xs={12} sm="auto" className="mb-2 mb-sm-0">
+            <h1 className="mb-0 fs-3 fs-md-2">Panel de administración</h1>
+          </Col>
+          <Col xs={12} sm="auto" className="ms-sm-auto">
+            <Button 
+              onClick={startNew}
+              className="w-100 w-sm-auto"
+              size="sm"
+            >
+              + Nueva propiedad
+            </Button>
+          </Col>
         </Row>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
       {!editing && (
-        <div className="card">
-          <div className="card-body">
-            {loading ? (
-              <div>Cargando...</div>
-            ) : (
-              <Table responsive hover>
-                <thead>
-                  <tr>
-                    <th>Título</th>
-                    <th>Precio USD</th>
-                    <th>Tipo</th>
-                    <th>Estado</th>
-                    <th>Imágenes</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
+        <div>
+          {loading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+              <p className="mt-2 text-muted">Cargando propiedades...</p>
+            </div>
+          ) : (
+            <>
+              {/* Vista de tabla para escritorio */}
+              <div className="d-none d-lg-block">
+                <div className="card">
+                  <div className="card-body">
+                    <Table responsive striped hover>
+                      <thead className="table-dark">
+                        <tr>
+                          <th>Título</th>
+                          <th>Precio USD</th>
+                          <th>Tipo</th>
+                          <th>Estado</th>
+                          <th>Imágenes</th>
+                          <th>Acciones</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {items.map((p) => (
+                          <tr key={p.id}>
+                            <td className="fw-semibold">{p.title}</td>
+                            <td>${p.priceUsd.toLocaleString()}</td>
+                            <td>{p.type ?? '-'}</td>
+                            <td>
+                              <Badge bg={p.status === 'En venta' ? 'success' : p.status === 'En alquiler' ? 'info' : 'secondary'}>
+                                {p.status ?? '-'}
+                              </Badge>
+                            </td>
+                            <td>
+                              <Badge bg="secondary">{p.images?.length ?? 0} fotos</Badge>
+                            </td>
+                            <td className="text-nowrap">
+                              <Button 
+                                size="sm" 
+                                variant="outline-primary" 
+                                className="me-2" 
+                                onClick={() => setEditing(p)}
+                              >
+                                Editar
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline-danger" 
+                                onClick={() => deleteItem(p.id)}
+                              >
+                                Eliminar
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vista de tarjetas para móvil/tablet */}
+              <div className="d-lg-none">
+                <Row className="g-3">
                   {items.map((p) => (
-                    <tr key={p.id}>
-                      <td>{p.title}</td>
-                      <td>{p.priceUsd}</td>
-                      <td>{p.type ?? '-'}</td>
-                      <td>{p.status ?? '-'}</td>
-                      <td>{p.images?.length ?? 0}</td>
-                      <td className="text-end">
-                        <Button size="sm" variant="outline-primary" className="me-2" onClick={() => setEditing(p)}>Editar</Button>
-                        <Button size="sm" variant="outline-danger" onClick={() => deleteItem(p.id)}>Eliminar</Button>
-                      </td>
-                    </tr>
+                    <Col xs={12} key={p.id}>
+                      <Card className="border">
+                        <Card.Body className="p-3">
+                          <Row className="align-items-center">
+                            <Col xs={12} sm={8}>
+                              <h5 className="mb-1 fs-6">{p.title}</h5>
+                              <div className="text-muted small mb-2">
+                                {p.type ?? 'Sin tipo'} • ${p.priceUsd.toLocaleString()}
+                              </div>
+                              <div className="d-flex gap-2 flex-wrap">
+                                <Badge bg={p.status === 'En venta' ? 'success' : p.status === 'En alquiler' ? 'info' : 'secondary'}>
+                                  {p.status ?? 'Sin estado'}
+                                </Badge>
+                                <Badge bg="secondary">{p.images?.length ?? 0} fotos</Badge>
+                              </div>
+                            </Col>
+                            <Col xs={12} sm={4} className="mt-2 mt-sm-0">
+                              <div className="d-flex gap-2 flex-sm-column">
+                                <Button 
+                                  size="sm" 
+                                  className="flex-fill"
+                                  onClick={() => setEditing(p)}
+                                >
+                                  Editar
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline-danger"
+                                  className="flex-fill"
+                                  onClick={() => deleteItem(p.id)}
+                                >
+                                  Eliminar
+                                </Button>
+                              </div>
+                            </Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Col>
                   ))}
-                </tbody>
-              </Table>
-            )}
-          </div>
+                </Row>
+              </div>
+            </>
+          )}
         </div>
       )}
 
       {editing && (
         <div className="card mt-4">
+          <div className="card-header">
+            <Row className="align-items-center">
+              <Col>
+                <h5 className="mb-0">
+                  {editing.id ? 'Editar Propiedad' : 'Nueva Propiedad'}
+                </h5>
+              </Col>
+              <Col xs="auto">
+                <Button 
+                  variant="outline-secondary" 
+                  size="sm" 
+                  onClick={() => setEditing(null)}
+                >
+                  ✕ Cancelar
+                </Button>
+              </Col>
+            </Row>
+          </div>
           <div className="card-body">
             <Form onSubmit={saveItem}>
               <Row className="g-3">
-                <Col md={6}>
+                <Col xs={12} md={6}>
                   <Form.Group>
-                    <Form.Label>Título</Form.Label>
-                    <Form.Control value={editing.title} onChange={(e) => setEditing({ ...(editing as Property), title: e.target.value })} required />
+                    <Form.Label className="fw-semibold">Título *</Form.Label>
+                    <Form.Control 
+                      value={editing.title} 
+                      onChange={(e) => setEditing({ ...(editing as Property), title: e.target.value })} 
+                      required 
+                      placeholder="Ej: Casa 3 dormitorios en centro"
+                      className="form-control-lg"
+                    />
                   </Form.Group>
                 </Col>
-                <Col md={3}>
+                <Col xs={12} sm={6} md={3}>
                   <Form.Group>
-                    <Form.Label>Precio USD</Form.Label>
-                    <Form.Control type="number" value={editing.priceUsd} onChange={(e) => setEditing({ ...(editing as Property), priceUsd: Number(e.target.value) })} required />
+                    <Form.Label className="fw-semibold">Precio USD *</Form.Label>
+                    <Form.Control 
+                      type="number" 
+                      value={editing.priceUsd} 
+                      onChange={(e) => setEditing({ ...(editing as Property), priceUsd: Number(e.target.value) })} 
+                      required 
+                      placeholder="150000"
+                      className="form-control-lg"
+                    />
                   </Form.Group>
                 </Col>
-                <Col md={3}>
+                <Col xs={12} sm={6} md={3}>
                   <Form.Group>
-                    <Form.Label>Tipo</Form.Label>
-                    <Form.Control value={editing.type ?? ''} onChange={(e) => setEditing({ ...(editing as Property), type: e.target.value })} />
+                    <Form.Label className="fw-semibold">Tipo</Form.Label>
+                    <Form.Select 
+                      value={editing.type ?? ''} 
+                      onChange={(e) => setEditing({ ...(editing as Property), type: e.target.value })}
+                      className="form-select-lg"
+                    >
+                      <option value="">Seleccionar tipo</option>
+                      <option value="Casa">Casa</option>
+                      <option value="Departamento">Departamento</option>
+                      <option value="Terreno">Terreno</option>
+                      <option value="Campo">Campo</option>
+                      <option value="Local">Local</option>
+                      <option value="Desarrollo">Desarrollo</option>
+                    </Form.Select>
                   </Form.Group>
                 </Col>
-                <Col md={12}>
+                <Col xs={12}>
                   <Form.Group>
-                    <Form.Label>Descripción</Form.Label>
-                    <Form.Control as="textarea" rows={3} value={editing.description ?? ''} onChange={(e) => setEditing({ ...(editing as Property), description: e.target.value })} />
+                    <Form.Label className="fw-semibold">Descripción</Form.Label>
+                    <Form.Control 
+                      as="textarea" 
+                      rows={3} 
+                      value={editing.description ?? ''} 
+                      onChange={(e) => setEditing({ ...(editing as Property), description: e.target.value })} 
+                      placeholder="Descripción detallada de la propiedad..."
+                      className="form-control-lg"
+                    />
                   </Form.Group>
                 </Col>
-                <Col md={4}>
+                <Col xs={12} sm={6}>
                   <Form.Group>
-                    <Form.Label>Estado</Form.Label>
-                    <Form.Select value={editing.status ?? ''} onChange={(e) => setEditing({ ...(editing as Property), status: e.target.value })}>
-                      <option value="">-</option>
+                    <Form.Label className="fw-semibold">Estado</Form.Label>
+                    <Form.Select 
+                      value={editing.status ?? ''} 
+                      onChange={(e) => setEditing({ ...(editing as Property), status: e.target.value })}
+                      className="form-select-lg"
+                    >
+                      <option value="">Seleccionar estado</option>
                       <option value="En venta">En venta</option>
                       <option value="En alquiler">En alquiler</option>
                       <option value="Reservado">Reservado</option>
@@ -255,31 +397,78 @@ export default function Admin() {
                     </Form.Select>
                   </Form.Group>
                 </Col>
-                <Col md={8}>
+                <Col xs={12} sm={6}>
                   <Form.Group>
-                    <Form.Label>Subir imagen</Form.Label>
-                    <div className="d-flex gap-2">
-                      <Form.Control type="file" onChange={(e) => {
-                        const target = e.target as HTMLInputElement
-                        setFile(target.files?.[0] ?? null)
-                      }} />
-                      <Button variant="secondary" onClick={uploadImage} disabled={!file}>Subir</Button>
+                    <Form.Label className="fw-semibold">Subir imagen</Form.Label>
+                    <div className="d-flex gap-2 flex-column flex-sm-row">
+                      <Form.Control 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => {
+                          const target = e.target as HTMLInputElement
+                          setFile(target.files?.[0] ?? null)
+                        }} 
+                        className="form-control-lg"
+                      />
+                      <Button 
+                        variant="secondary" 
+                        onClick={uploadImage} 
+                        disabled={!file}
+                        className="flex-shrink-0"
+                      >
+                        📷 Subir
+                      </Button>
                     </div>
                   </Form.Group>
                 </Col>
-                <Col md={12}>
-                  <div className="d-flex flex-wrap gap-2">
-                    {(editing.images ?? []).map((url, i) => (
-                      <div key={i} className="border rounded p-2 d-flex align-items-center gap-2">
-                        <img src={`${url.startsWith('http') ? url : baseApi + url}`} alt="img" style={{ width: 80, height: 60, objectFit: 'cover' }} />
-                        <Button size="sm" variant="outline-danger" onClick={() => setEditing({ ...(editing as Property), images: (editing.images ?? []).filter((u) => u !== url) })}>Quitar</Button>
-                      </div>
-                    ))}
+                <Col xs={12}>
+                  <Form.Label className="fw-semibold">Imágenes actuales</Form.Label>
+                  <div className="d-flex flex-wrap gap-3">
+                    {(editing.images ?? []).length === 0 ? (
+                      <div className="text-muted small">Sin imágenes</div>
+                    ) : (
+                      (editing.images ?? []).map((url, i) => (
+                        <div key={i} className="border rounded p-2 bg-light">
+                          <div className="d-flex flex-column align-items-center gap-2">
+                            <img 
+                              src={`${url.startsWith('http') ? url : baseApi + url}`} 
+                              alt={`Imagen ${i + 1}`} 
+                              style={{ width: 100, height: 75, objectFit: 'cover' }} 
+                              className="rounded"
+                            />
+                            <Button 
+                              size="sm" 
+                              variant="outline-danger" 
+                              onClick={() => setEditing({ 
+                                ...(editing as Property), 
+                                images: (editing.images ?? []).filter((u) => u !== url) 
+                              })}
+                              className="w-100"
+                            >
+                              🗑️ Quitar
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </Col>
-                <Col md={12} className="d-flex gap-2 justify-content-end">
-                  <Button variant="outline-secondary" onClick={() => setEditing(null)}>Cancelar</Button>
-                  <Button type="submit">Guardar</Button>
+                <Col xs={12} className="d-flex gap-2 justify-content-end flex-column flex-sm-row">
+                  <Button 
+                    variant="outline-secondary" 
+                    onClick={() => setEditing(null)}
+                    className="order-2 order-sm-1"
+                  >
+                    Cancelar
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    variant="primary"
+                    className="order-1 order-sm-2"
+                    size="lg"
+                  >
+                    💾 {editing.id ? 'Actualizar' : 'Crear'} Propiedad
+                  </Button>
                 </Col>
               </Row>
             </Form>

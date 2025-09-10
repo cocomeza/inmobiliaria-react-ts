@@ -1,5 +1,6 @@
 import './App.css'
 import './theme.css'
+import './styles/responsive.css'
 import { useEffect } from 'react'
 import AOS from 'aos'
 import { Route, Router, Switch } from 'wouter'

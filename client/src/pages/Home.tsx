@@ -11,11 +11,11 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Container className="py-5">
-        <h2 className="mb-4">Propiedades destacadas</h2>
-        <Row className="g-4">
+      <Container className="py-4 py-md-5">
+        <h2 className="mb-3 mb-md-4 text-center text-md-start">Propiedades destacadas</h2>
+        <Row className="g-3 g-md-4">
           {featured.map((p) => (
-            <Col key={p.id} md={6} lg={4}>
+            <Col key={p.id} xs={12} sm={6} lg={4}>
               <PropertyCard item={p} />
             </Col>
           ))}
