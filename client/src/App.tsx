@@ -13,6 +13,8 @@ import Contact from './pages/Contact'
 import PropertyDetail from './pages/PropertyDetail'
 import Footer from './components/Footer'
 import Admin from './pages/Admin'
+import Login from './pages/Login'
+import ProtectedRoute from './components/ProtectedRoute'
 
  
 
@@ -32,7 +34,12 @@ function App() {
         <Route path="/nosotros" component={About} />
         <Route path="/contacto" component={Contact} />
         <Route path="/propiedad/:id" component={PropertyDetail} />
-        <Route path="/admin" component={Admin} />
+        <Route path="/login" component={Login} />
+        <Route path="/admin">
+          <ProtectedRoute>
+            <Admin />
+          </ProtectedRoute>
+        </Route>
       </Switch>
 
       <Footer />

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap'
+import { Button, Col, Container, Form, Row, Table, Navbar, Nav } from 'react-bootstrap'
+import { useAuth } from '../hooks/useAuth'
+import { useLocation } from 'wouter'
 
 type Property = {
   id: string
@@ -17,6 +19,17 @@ export default function Admin() {
   const [error, setError] = useState<string | null>(null)
   const [editing, setEditing] = useState<Property | null>(null)
   const [file, setFile] = useState<File | null>(null)
+  const { user, logout } = useAuth()
+  const [, setLocation] = useLocation()
+
+  // Helper para obtener headers de autenticación
+  function getAuthHeaders() {
+    const token = localStorage.getItem('adminToken')
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    }
+  }
 
   async function fetchItems() {
     setLoading(true)
@@ -59,7 +72,7 @@ export default function Admin() {
       const url = editing.id ? `${baseUrl}/api/properties/${editing.id}` : `${baseUrl}/api/properties`
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           title: editing.title,
           description: editing.description,
@@ -88,7 +101,11 @@ export default function Admin() {
     if (!confirm('¿Eliminar propiedad?')) return
     try {
       const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
-      const res = await fetch(`${baseUrl}/api/properties/${id}`, { method: 'DELETE' })
+      const token = localStorage.getItem('adminToken')
+      const res = await fetch(`${baseUrl}/api/properties/${id}`, { 
+        method: 'DELETE',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
       if (!res.ok && res.status !== 204) throw new Error('Error')
       await fetchItems()
     } catch (e) {
@@ -102,7 +119,15 @@ export default function Admin() {
       const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
       const fd = new FormData()
       fd.append('image', file)
-      const res = await fetch(`${baseUrl}/api/upload`, { method: 'POST', body: fd })
+      const token = localStorage.getItem('adminToken')
+      const headers: Record<string, string> = {}
+      if (token) headers.Authorization = `Bearer ${token}`
+      
+      const res = await fetch(`${baseUrl}/api/upload`, { 
+        method: 'POST', 
+        headers,
+        body: fd 
+      })
       const json = (await res.json()) as { url: string }
       if (editing) {
         setEditing({ ...editing, images: [...(editing.images ?? []), json.url] })
@@ -115,12 +140,39 @@ export default function Admin() {
 
   const baseApi = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
 
+  function handleLogout() {
+    logout()
+    setLocation('/login')
+  }
+
   return (
-    <Container className="py-5">
-      <Row className="align-items-center mb-3">
-        <Col><h1 className="mb-0">Panel de administración</h1></Col>
-        <Col xs="auto"><Button onClick={startNew}>Nueva propiedad</Button></Col>
-      </Row>
+    <>
+      {/* Header de administración */}
+      <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
+        <Container>
+          <Navbar.Brand>
+            🏠 Admin Panel
+          </Navbar.Brand>
+          <Nav className="ms-auto">
+            <Nav.Item className="d-flex align-items-center me-3">
+              <span className="text-light">
+                Bienvenido, <strong>{user?.username}</strong>
+              </span>
+            </Nav.Item>
+            <Nav.Item>
+              <Button variant="outline-light" size="sm" onClick={handleLogout}>
+                Cerrar Sesión
+              </Button>
+            </Nav.Item>
+          </Nav>
+        </Container>
+      </Navbar>
+
+      <Container className="py-3">
+        <Row className="align-items-center mb-3">
+          <Col><h1 className="mb-0">Panel de administración</h1></Col>
+          <Col xs="auto"><Button onClick={startNew}>Nueva propiedad</Button></Col>
+        </Row>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
@@ -234,7 +286,8 @@ export default function Admin() {
           </div>
         </div>
       )}
-    </Container>
+      </Container>
+    </>
   )
 }
 

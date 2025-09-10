@@ -3,12 +3,18 @@ import cors from 'cors'
 import path from 'path'
 import fs from 'fs'
 import multer from 'multer'
+import jwt from 'jsonwebtoken'
 
 const app = express()
 const PORT = process.env.PORT || 4000
 const ROOT_DIR = path.resolve(__dirname, '..')
 const DATA_DIR = path.join(ROOT_DIR, 'data')
 const UPLOADS_DIR = path.join(ROOT_DIR, 'uploads')
+
+// Configuración de autenticación
+const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_muy_segura_2024'
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'inmobiliaria2024'
 
 // Ensure directories exist
 fs.mkdirSync(DATA_DIR, { recursive: true })
@@ -74,8 +80,53 @@ if (!fs.existsSync(dataFilePath)) {
   ])
 }
 
+// Middleware de autenticación
+function authenticateToken(req: any, res: any, next: any) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
+    if (err) return res.sendStatus(403)
+    req.user = user
+    next()
+  })
+}
+
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true })
+})
+
+// Ruta de login
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body
+
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Usuario y contraseña requeridos' })
+  }
+
+  // Verificar credenciales
+  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    const user = { username: ADMIN_USERNAME, role: 'admin' }
+    const token = jwt.sign(user, JWT_SECRET, { expiresIn: '24h' })
+    
+    res.json({ 
+      success: true, 
+      token, 
+      user 
+    })
+  } else {
+    res.status(401).json({ message: 'Usuario o contraseña incorrectos' })
+  }
+})
+
+// Verificar estado de autenticación
+app.get('/api/auth-check', authenticateToken, (req: any, res) => {
+  res.json({ 
+    success: true, 
+    user: req.user 
+  })
 })
 
 app.get('/api/properties', (_req, res) => {
@@ -90,8 +141,8 @@ app.get('/api/properties/:id', (req, res) => {
   res.json(found)
 })
 
-// Create property
-app.post('/api/properties', (req, res) => {
+// Create property (protegida)
+app.post('/api/properties', authenticateToken, (req, res) => {
   const body = req.body ?? {}
   if (!body.title || typeof body.priceUsd !== 'number') {
     return res.status(400).json({ message: 'Campos requeridos: title, priceUsd' })
@@ -117,8 +168,8 @@ app.post('/api/properties', (req, res) => {
   res.status(201).json(newItem)
 })
 
-// Update property
-app.put('/api/properties/:id', (req, res) => {
+// Update property (protegida)
+app.put('/api/properties/:id', authenticateToken, (req, res) => {
   const id = req.params.id
   const list = readProperties()
   const idx = list.findIndex((p) => p.id === id)
@@ -142,8 +193,8 @@ app.put('/api/properties/:id', (req, res) => {
   res.json(updated)
 })
 
-// Delete property
-app.delete('/api/properties/:id', (req, res) => {
+// Delete property (protegida)
+app.delete('/api/properties/:id', authenticateToken, (req, res) => {
   const id = req.params.id
   const list = readProperties()
   const exists = list.some((p) => p.id === id)
@@ -173,7 +224,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
-app.post('/api/upload', upload.single('image'), (req, res) => {
+app.post('/api/upload', authenticateToken, upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ message: 'Archivo requerido' })
   const publicUrl = `/uploads/${req.file.filename}`
   res.status(201).json({ url: publicUrl })
