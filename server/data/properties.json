@@ -1,0 +1,17 @@
+[
+  {
+    "id": "1",
+    "title": "Departamento en Palermo",
+    "description": "2 ambientes luminosos cerca de parques y polo gastronómico.",
+    "priceUsd": 150000,
+    "address": "Cerviño 4800, Palermo, CABA",
+    "bedrooms": 2,
+    "bathrooms": 1,
+    "lat": -34.573,
+    "lng": -58.419,
+    "images": [],
+    "featured": true,
+    "type": "Departamento",
+    "status": "En venta"
+  }
+]

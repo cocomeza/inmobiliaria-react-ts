@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Col, Container, Form, Row, Table } from 'react-bootstrap'
 
 type Property = {
@@ -207,7 +207,10 @@ export default function Admin() {
                   <Form.Group>
                     <Form.Label>Subir imagen</Form.Label>
                     <div className="d-flex gap-2">
-                      <Form.Control type="file" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+                      <Form.Control type="file" onChange={(e) => {
+                        const target = e.target as HTMLInputElement
+                        setFile(target.files?.[0] ?? null)
+                      }} />
                       <Button variant="secondary" onClick={uploadImage} disabled={!file}>Subir</Button>
                     </div>
                   </Form.Group>
