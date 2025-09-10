@@ -1,20 +1,29 @@
 {
-  "name": "workspace",
+  "name": "inmobiliaria-react-ts",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
+  "workspaces": ["client", "server"],
+  "description": "Monorepo de la inmobiliaria con frontend React + backend Node/Express",
   "scripts": {
+    // Desarrollo local (levanta cliente + servidor juntos)
     "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\"",
+
+    // Build separado
     "build:client": "npm run build --prefix client",
     "build:server": "npm run build --prefix server",
+
+    // Build completo para producción
     "build": "npm run build:client && npm run build:server",
+
+    // Preview del frontend
     "preview": "npm run preview --prefix client",
+
+    // Arrancar backend en local o producción
     "start:server": "npm run start --prefix server",
+    "start": "npm run start:server",
+
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.0.0",
     "@fortawesome/free-brands-svg-icons": "^7.0.0",
