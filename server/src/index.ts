@@ -11,6 +11,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 const ROOT_DIR = path.resolve(__dirname, '..')
 const DATA_DIR = path.join(ROOT_DIR, 'data')
 const UPLOADS_DIR = path.join(ROOT_DIR, 'uploads')
+const CLIENT_DIST = path.join(ROOT_DIR, 'dist')
 
 // Configuración de autenticación
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_muy_segura_2024'
@@ -242,18 +243,15 @@ app.post('/api/upload', authenticateToken, upload.single('image'), (req, res) =>
   res.status(201).json({ url: publicUrl })
 })
 
-// Fallback: serve the client app for non-API routes
-app.use((req, res, next) => {
-  // If it's an API route or upload route, continue to next middleware
-  if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
-    return next()
-  }
-  
-  // For all other routes, redirect to the Vite dev server
-  const clientUrl = 'http://localhost:5000'
-  res.redirect(clientUrl + req.originalUrl)
-})
+// 📌 Servir el frontend (dist) en producción
+if (fs.existsSync(CLIENT_DIST)) {
+  app.use(express.static(CLIENT_DIST))
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(CLIENT_DIST, 'index.html'))
+  })
+}
 
+<<<<<<< HEAD
 // Health check endpoint para Railway
 app.get('/api/health', (req, res) => {
   res.status(200).json({ 
@@ -269,6 +267,9 @@ app.listen(Number(PORT), '0.0.0.0', () => {
   if (!isProduction) {
     console.log(`Redirigiendo rutas no-API a http://localhost:5000`)
   }
+=======
+app.listen(PORT, () => {
+  console.log(`API escuchando en http://localhost:${PORT}`)
+>>>>>>> e35398bcd6009953e07a6dfe9fdc348a5e6c6284
 })
-
 
