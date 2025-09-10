@@ -251,8 +251,7 @@ if (fs.existsSync(CLIENT_DIST)) {
   })
 }
 
-<<<<<<< HEAD
-// Health check endpoint para Railway
+// Health check endpoint para Railway/Render
 app.get('/api/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
@@ -267,9 +266,5 @@ app.listen(Number(PORT), '0.0.0.0', () => {
   if (!isProduction) {
     console.log(`Redirigiendo rutas no-API a http://localhost:5000`)
   }
-=======
-app.listen(PORT, () => {
-  console.log(`API escuchando en http://localhost:${PORT}`)
->>>>>>> e35398bcd6009953e07a6dfe9fdc348a5e6c6284
 })
 
