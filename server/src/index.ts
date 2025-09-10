@@ -11,7 +11,6 @@ const isProduction = process.env.NODE_ENV === 'production'
 const ROOT_DIR = path.resolve(__dirname, '..')
 const DATA_DIR = path.join(ROOT_DIR, 'data')
 const UPLOADS_DIR = path.join(ROOT_DIR, 'uploads')
-const CLIENT_DIST = path.join(ROOT_DIR, 'dist')
 
 // Configuración de autenticación
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_muy_segura_2024'
@@ -243,15 +242,7 @@ app.post('/api/upload', authenticateToken, upload.single('image'), (req, res) =>
   res.status(201).json({ url: publicUrl })
 })
 
-// 📌 Servir el frontend (dist) en producción
-if (fs.existsSync(CLIENT_DIST)) {
-  app.use(express.static(CLIENT_DIST))
-  app.get('*', (_req, res) => {
-    res.sendFile(path.join(CLIENT_DIST, 'index.html'))
-  })
-}
-
-// Health check endpoint para Railway/Render
+// Health check endpoint para Railway/Render - DEBE estar ANTES del catch-all
 app.get('/api/health', (req, res) => {
   res.status(200).json({ 
     status: 'OK', 
@@ -259,6 +250,14 @@ app.get('/api/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development'
   })
 })
+
+// 📌 Catch-all route para redireccionar al frontend (solo en desarrollo)
+if (!isProduction) {
+  app.get('*', (_req, res) => {
+    const clientUrl = 'http://localhost:5000'
+    res.redirect(clientUrl + _req.originalUrl)
+  })
+}
 
 app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`API escuchando en http://0.0.0.0:${PORT}`)

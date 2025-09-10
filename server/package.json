@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json", 
     "start": "node dist/index.js",
-    "render-build": "npm run build"
+    "render-postbuild": "npm run build"
   },
   "keywords": [],
   "author": "",
