@@ -179,8 +179,21 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   res.status(201).json({ url: publicUrl })
 })
 
+// Fallback: serve the client app for non-API routes
+app.use((req, res, next) => {
+  // If it's an API route or upload route, continue to next middleware
+  if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+    return next()
+  }
+  
+  // For all other routes, redirect to the Vite dev server
+  const clientUrl = 'http://localhost:5000'
+  res.redirect(clientUrl + req.originalUrl)
+})
+
 app.listen(PORT, () => {
   console.log(`API escuchando en http://localhost:${PORT}`)
+  console.log(`Redirigiendo rutas no-API a http://localhost:5000`)
 })
 
 

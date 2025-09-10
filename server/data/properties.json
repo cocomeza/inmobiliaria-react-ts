@@ -13,5 +13,14 @@
     "featured": true,
     "type": "Departamento",
     "status": "En venta"
+  },
+  {
+    "id": "1757522516701",
+    "title": "Casa de prueba oLK3Up - EDITADA",
+    "description": "Una hermosa casa de prueba para verificar la funcionalidad",
+    "priceUsd": 250000,
+    "images": [],
+    "featured": false,
+    "type": "Casa"
   }
 ]
