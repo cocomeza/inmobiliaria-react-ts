@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 
 const app = express()
 const PORT = process.env.PORT || 4000
+const isProduction = process.env.NODE_ENV === 'production'
 const ROOT_DIR = path.resolve(__dirname, '..')
 const DATA_DIR = path.join(ROOT_DIR, 'data')
 const UPLOADS_DIR = path.join(ROOT_DIR, 'uploads')
@@ -20,7 +21,16 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'inmobiliaria2024'
 fs.mkdirSync(DATA_DIR, { recursive: true })
 fs.mkdirSync(UPLOADS_DIR, { recursive: true })
 
-app.use(cors())
+// Configuración CORS para producción
+const corsOptions = {
+  origin: isProduction 
+    ? ['https://your-vercel-app.vercel.app', 'https://inmobiliaria-diego-nadal.vercel.app']
+    : ['http://localhost:5000', 'http://localhost:5001'],
+  credentials: true,
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use('/uploads', express.static(UPLOADS_DIR))
 
@@ -175,6 +185,8 @@ app.put('/api/properties/:id', authenticateToken, (req, res) => {
   const idx = list.findIndex((p) => p.id === id)
   if (idx === -1) return res.status(404).json({ message: 'No encontrada' })
   const prev = list[idx]
+  if (!prev) return res.status(404).json({ message: 'Propiedad no encontrada' })
+  
   const body = req.body ?? {}
   const updated: Property = {
     ...prev,
@@ -242,9 +254,21 @@ app.use((req, res, next) => {
   res.redirect(clientUrl + req.originalUrl)
 })
 
-app.listen(PORT, () => {
-  console.log(`API escuchando en http://localhost:${PORT}`)
-  console.log(`Redirigiendo rutas no-API a http://localhost:5000`)
+// Health check endpoint para Railway
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  })
+})
+
+app.listen(Number(PORT), '0.0.0.0', () => {
+  console.log(`API escuchando en http://0.0.0.0:${PORT}`)
+  console.log(`Entorno: ${process.env.NODE_ENV || 'development'}`)
+  if (!isProduction) {
+    console.log(`Redirigiendo rutas no-API a http://localhost:5000`)
+  }
 })
 
 
