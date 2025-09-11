@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'aos/dist/aos.css'
 import 'leaflet/dist/leaflet.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import App from './App.tsx'
+import App from './App'
 
 const queryClient = new QueryClient()
 
