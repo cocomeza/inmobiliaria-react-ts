@@ -1,9 +1,18 @@
-import express from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 import cors from 'cors'
 import path from 'path'
 import fs from 'fs'
 import multer from 'multer'
 import jwt from 'jsonwebtoken'
+
+// Extend Express Request type to include file property
+declare global {
+  namespace Express {
+    interface Request {
+      file?: Express.Multer.File
+    }
+  }
+}
 
 const app = express()
 const PORT = process.env.PORT || 4000
@@ -237,8 +246,10 @@ app.post('/api/contact', (req, res) => {
 
 // File uploads
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-  filename: (_req, file, cb) => {
+  destination: (_req: Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
+    cb(null, UPLOADS_DIR)
+  },
+  filename: (_req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
     const ext = path.extname(file.originalname)
     const base = path.basename(file.originalname, ext)
     const safeBase = base.replace(/[^a-zA-Z0-9-_]/g, '_')
@@ -247,7 +258,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
-app.post('/api/upload', authenticateToken, upload.single('image'), (req, res) => {
+app.post('/api/upload', authenticateToken, upload.single('image'), (req: Request, res: Response) => {
   if (!req.file) return res.status(400).json({ message: 'Archivo requerido' })
   const publicUrl = `/uploads/${req.file.filename}`
   res.status(201).json({ url: publicUrl })
