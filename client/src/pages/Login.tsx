@@ -51,11 +51,11 @@ export default function Login() {
   return (
     <Container className="py-4 py-md-5">
       <Row className="justify-content-center align-items-center min-vh-100">
-        <Col xs={11} sm={8} md={6} lg={4}>
+        <Col xs={11} sm={10} md={8} lg={6} xl={5} xxl={4}>
           <div className="card shadow-lg border-0">
-            <div className="card-body p-4 p-md-5">
-              <div className="text-center mb-4 mb-md-5">
-                <h2 className="mb-2 fs-3">🏠 Admin Login</h2>
+            <div className="card-body p-3 p-sm-4 p-md-5 p-lg-4 p-xl-5">
+              <div className="text-center mb-3 mb-md-4 mb-lg-5">
+                <h2 className="mb-2 fs-4 fs-md-3">🏠 Admin Login</h2>
                 <p className="text-muted mb-0 small">Panel de Administración</p>
               </div>
               
@@ -67,7 +67,7 @@ export default function Login() {
               
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label className="fw-semibold small">Usuario</Form.Label>
+                  <Form.Label className="fw-semibold small mb-2">Usuario</Form.Label>
                   <Form.Control
                     type="text"
                     value={username}
@@ -75,13 +75,13 @@ export default function Login() {
                     placeholder="Ingresá tu usuario"
                     required
                     disabled={loading}
-                    className="form-control-lg"
+                    className="form-control-lg py-3"
                     autoComplete="username"
                   />
                 </Form.Group>
                 
                 <Form.Group className="mb-4">
-                  <Form.Label className="fw-semibold small">Contraseña</Form.Label>
+                  <Form.Label className="fw-semibold small mb-2">Contraseña</Form.Label>
                   <Form.Control
                     type="password"
                     value={password}
@@ -89,7 +89,7 @@ export default function Login() {
                     placeholder="Ingresá tu contraseña"
                     required
                     disabled={loading}
-                    className="form-control-lg"
+                    className="form-control-lg py-3"
                     autoComplete="current-password"
                   />
                 </Form.Group>
@@ -97,8 +97,9 @@ export default function Login() {
                 <Button 
                   variant="primary" 
                   type="submit" 
-                  className="w-100 btn-lg py-3" 
+                  className="w-100 btn-lg py-3 fs-6" 
                   disabled={loading}
+                  style={{ minHeight: '48px' }}
                 >
                   {loading ? 'Ingresando...' : 'Ingresar'}
                 </Button>
