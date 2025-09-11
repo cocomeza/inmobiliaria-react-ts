@@ -2,7 +2,10 @@
   "name": "inmobiliaria-react-ts",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["client", "server"],
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "description": "Monorepo de la inmobiliaria con frontend React + backend Node/Express",
   "engines": {
     "node": ">=18"
