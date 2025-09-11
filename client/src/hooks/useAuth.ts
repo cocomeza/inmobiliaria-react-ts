@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { apiRequest } from '../lib/api'
 
 interface User {
   username: string
@@ -40,8 +41,7 @@ export function useAuth() {
       }
 
       // Verificar token con el servidor
-      const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
-      const res = await fetch(`${baseUrl}/api/auth-check`, {
+      const res = await apiRequest('/api/auth-check', {
         headers: { Authorization: `Bearer ${token}` },
       })
 

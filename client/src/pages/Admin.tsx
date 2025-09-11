@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button, Col, Container, Form, Row, Table, Navbar, Nav, Badge, Card } from 'react-bootstrap'
 import { useAuth } from '../hooks/useAuth'
 import { useLocation } from 'wouter'
+import { apiRequest, getApiUrl } from '../lib/api'
 
 type Property = {
   id: string
@@ -35,7 +36,7 @@ export default function Admin() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL ?? 'http://localhost:4000'}/api/properties`)
+      const res = await apiRequest('/api/properties')
       const data = (await res.json()) as Property[]
       setItems(data)
     } catch (e) {
@@ -67,12 +68,10 @@ export default function Admin() {
       return
     }
     try {
-      const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
       const method = editing.id ? 'PUT' : 'POST'
-      const url = editing.id ? `${baseUrl}/api/properties/${editing.id}` : `${baseUrl}/api/properties`
-      const res = await fetch(url, {
+      const url = editing.id ? `/api/properties/${editing.id}` : '/api/properties'
+      const res = await apiRequest(url, {
         method,
-        headers: getAuthHeaders(),
         body: JSON.stringify({
           title: editing.title,
           description: editing.description,
@@ -100,9 +99,8 @@ export default function Admin() {
   async function deleteItem(id: string) {
     if (!confirm('¿Eliminar propiedad?')) return
     try {
-      const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
       const token = localStorage.getItem('adminToken')
-      const res = await fetch(`${baseUrl}/api/properties/${id}`, { 
+      const res = await apiRequest(`/api/properties/${id}`, { 
         method: 'DELETE',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       })
@@ -116,14 +114,13 @@ export default function Admin() {
   async function uploadImage() {
     if (!file) return
     try {
-      const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
       const fd = new FormData()
       fd.append('image', file)
       const token = localStorage.getItem('adminToken')
       const headers: Record<string, string> = {}
       if (token) headers.Authorization = `Bearer ${token}`
       
-      const res = await fetch(`${baseUrl}/api/upload`, { 
+      const res = await fetch(`${getApiUrl()}/api/upload`, { 
         method: 'POST', 
         headers,
         body: fd 
@@ -138,7 +135,7 @@ export default function Admin() {
     }
   }
 
-  const baseApi = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
+  const baseApi = getApiUrl()
 
   function handleLogout() {
     logout()

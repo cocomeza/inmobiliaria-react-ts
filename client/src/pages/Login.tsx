@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Col, Container, Form, Row, Alert } from 'react-bootstrap'
 import { useLocation } from 'wouter'
+import { apiRequest } from '../lib/api'
 
 export default function Login() {
   const [username, setUsername] = useState('')
@@ -21,10 +22,8 @@ export default function Login() {
     }
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
-      const res = await fetch(`${baseUrl}/api/login`, {
+      const res = await apiRequest('/api/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       })
 
