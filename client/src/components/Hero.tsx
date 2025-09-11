@@ -12,7 +12,7 @@ export default function Hero() {
           </h1>
           <p className="lead mb-4 fs-6 fs-md-5" style={{ maxWidth: '100%' }}>
             <span className="d-none d-md-inline">
-              Conocé nuestras propiedades y recibí asesoramiento personalizado para comprar, vender o alquilar en Entre Ríos.
+              Conocé nuestras propiedades y recibí asesoramiento personalizado para comprar, vender o alquilar en Ramallo.
             </span>
             <span className="d-md-none">
               Propiedades en Entre Ríos. Asesoramiento personalizado para comprar, vender o alquilar.
