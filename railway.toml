@@ -1,3 +1,6 @@
+# Configuración para Railway - Proyecto Inmobiliaria (Monorepo)
+# Este archivo configura el deploy del backend y frontend por separado
+
 [build]
 builder = "NIXPACKS"
 
