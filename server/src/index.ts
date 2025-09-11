@@ -264,7 +264,7 @@ if (isProduction) {
   app.use(express.static(clientBuildPath))
   
   // Catch-all para routing del SPA - DEBE estar al final
-  app.get('*', (_req, res) => {
+  app.get('/*catchAll', (_req, res) => {
     const indexPath = path.join(clientBuildPath, 'index.html')
     res.sendFile(indexPath)
   })
