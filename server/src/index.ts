@@ -279,26 +279,19 @@ app.get('/api/health', (req, res) => {
   })
 })
 
-// 📌 Servir archivos estáticos en producción
+// 📌 SOLUCION TEMPORAL: Backend solo como API
+// Para Railway deployment: usar servicios separados en lugar de servir frontend desde backend
 if (isProduction) {
-  // Ruta al directorio build del cliente - más directa para Render
-  let clientBuildPath = path.join(process.cwd(), 'client/dist')
+  console.log('🚀 Backend funcionando solo como API (Railway mode)')
+  console.log('📋 Frontend debe desplegarse en servicio separado')
   
-  // Verificar si existe el archivo index.html
-  const indexHtmlPath = path.join(clientBuildPath, 'index.html')
-  if (!fs.existsSync(indexHtmlPath)) {
-    // Intentar con otra ruta como fallback
-    clientBuildPath = path.join(__dirname, '../../client/dist')
-    console.log(`Fallback: usando ruta ${clientBuildPath}`)
-  }
-  
-  console.log(`Sirviendo archivos estáticos desde: ${clientBuildPath}`)
-  app.use(express.static(clientBuildPath))
-  
-  // Catch-all para routing del SPA - DEBE estar al final
-  app.get('*', (_req, res) => {
-    const indexPath = path.join(clientBuildPath, 'index.html')
-    res.sendFile(indexPath)
+  // Health check simple para confirmar que el API funciona
+  app.get('/', (_req, res) => {
+    res.json({ 
+      message: 'API Inmobiliaria funcionando ✅', 
+      health: '/api/health',
+      endpoints: ['/api/properties', '/api/login', '/api/contact']
+    })
   })
 } else {
   // Solo en desarrollo - redireccionar a Vite dev server
