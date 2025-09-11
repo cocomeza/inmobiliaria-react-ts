@@ -247,8 +247,18 @@ app.get('/api/health', (req, res) => {
   })
 })
 
-// 📌 Catch-all route para redireccionar al frontend (solo en desarrollo)
-if (!isProduction) {
+// 📌 Servir archivos estáticos en producción
+if (isProduction) {
+  // Servir archivos estáticos del frontend build
+  const clientBuildPath = path.join(__dirname, '../../client/dist')
+  app.use(express.static(clientBuildPath))
+  
+  // Catch-all para routing del SPA - DEBE estar al final
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'))
+  })
+} else {
+  // Solo en desarrollo - redireccionar a Vite dev server
   app.get('/', (_req, res) => {
     res.redirect('http://localhost:5000/')
   })
