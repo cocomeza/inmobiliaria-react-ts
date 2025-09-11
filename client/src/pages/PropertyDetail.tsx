@@ -81,14 +81,17 @@ export default function PropertyDetail() {
         <Col md={5}>
           <h1 className="h3">{item.title}</h1>
           <div className="mb-3">{new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(item.priceUsd)}</div>
-          <div className="ratio ratio-4x3 rounded overflow-hidden bg-light d-flex align-items-center justify-content-center">
-            <div className="text-center text-muted">
-              <div className="mb-2">
-                <i className="fas fa-map-marker-alt fa-3x"></i>
-              </div>
-              <h6>Ubicación</h6>
-              <p className="small mb-0">Esperanza, Santa Fe, Argentina</p>
-            </div>
+          <div className="ratio ratio-4x3 rounded overflow-hidden">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3327.087951976268!2d-60.06567572545429!3d-33.499088773370275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95b9e370700a471f%3A0x40c71e9083743252!2sBelgrano%20938%2C%20B2914%20Villa%20Ramallo%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1757591393054!5m2!1ses-419!2sar" 
+              width="100%" 
+              height="100%" 
+              style={{border: 0}} 
+              allowFullScreen={true} 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Ubicación de la propiedad"
+            />
           </div>
         </Col>
       </Row>
