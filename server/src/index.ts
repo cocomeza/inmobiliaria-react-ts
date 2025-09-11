@@ -13,9 +13,20 @@ const DATA_DIR = path.join(ROOT_DIR, 'data')
 const UPLOADS_DIR = path.join(ROOT_DIR, 'uploads')
 
 // Configuración de autenticación
-const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_muy_segura_2024'
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin'
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'inmobiliaria2024'
+const JWT_SECRET = process.env.JWT_SECRET
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
+
+// Validate required environment variables in production
+if (isProduction && (!JWT_SECRET || !ADMIN_USERNAME || !ADMIN_PASSWORD)) {
+  console.error('ERROR: JWT_SECRET, ADMIN_USERNAME, and ADMIN_PASSWORD must be set in production')
+  process.exit(1)
+}
+
+// Development fallbacks (only for development)
+const devJwtSecret = JWT_SECRET || 'dev_secret_change_in_production'
+const devAdminUsername = ADMIN_USERNAME || 'admin'
+const devAdminPassword = ADMIN_PASSWORD || 'inmobiliaria2024'
 
 // Ensure directories exist
 fs.mkdirSync(DATA_DIR, { recursive: true })
@@ -97,7 +108,7 @@ function authenticateToken(req: any, res: any, next: any) {
 
   if (token == null) return res.sendStatus(401)
 
-  jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
+  jwt.verify(token, isProduction ? JWT_SECRET! : devJwtSecret, (err: any, user: any) => {
     if (err) return res.sendStatus(403)
     req.user = user
     next()
@@ -113,9 +124,13 @@ app.post('/api/login', (req, res) => {
   }
 
   // Verificar credenciales
-  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-    const user = { username: ADMIN_USERNAME, role: 'admin' }
-    const token = jwt.sign(user, JWT_SECRET, { expiresIn: '24h' })
+  const currentAdminUsername = isProduction ? ADMIN_USERNAME! : devAdminUsername
+  const currentAdminPassword = isProduction ? ADMIN_PASSWORD! : devAdminPassword
+  const currentJwtSecret = isProduction ? JWT_SECRET! : devJwtSecret
+  
+  if (username === currentAdminUsername && password === currentAdminPassword) {
+    const user = { username: currentAdminUsername, role: 'admin' }
+    const token = jwt.sign(user, currentJwtSecret, { expiresIn: '24h' })
     
     res.json({ 
       success: true, 
@@ -264,7 +279,7 @@ if (isProduction) {
   app.use(express.static(clientBuildPath))
   
   // Catch-all para routing del SPA - DEBE estar al final
-  app.get('/*catchAll', (_req, res) => {
+  app.get('*', (_req, res) => {
     const indexPath = path.join(clientBuildPath, 'index.html')
     res.sendFile(indexPath)
   })
