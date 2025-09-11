@@ -307,5 +307,8 @@ app.listen(Number(PORT), '0.0.0.0', () => {
   if (!isProduction) {
     console.log(`Redirigiendo rutas no-API a http://localhost:5000`)
   }
+}).on('error', (err) => {
+  console.error('Error starting server:', err)
+  process.exit(1)
 })
 
