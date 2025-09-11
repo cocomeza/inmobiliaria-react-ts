@@ -249,13 +249,24 @@ app.get('/api/health', (req, res) => {
 
 // 📌 Servir archivos estáticos en producción
 if (isProduction) {
-  // Servir archivos estáticos del frontend build
-  const clientBuildPath = path.join(__dirname, '../../client/dist')
+  // Ruta al directorio build del cliente - más directa para Render
+  let clientBuildPath = path.join(process.cwd(), 'client/dist')
+  
+  // Verificar si existe el archivo index.html
+  const indexHtmlPath = path.join(clientBuildPath, 'index.html')
+  if (!fs.existsSync(indexHtmlPath)) {
+    // Intentar con otra ruta como fallback
+    clientBuildPath = path.join(__dirname, '../../client/dist')
+    console.log(`Fallback: usando ruta ${clientBuildPath}`)
+  }
+  
+  console.log(`Sirviendo archivos estáticos desde: ${clientBuildPath}`)
   app.use(express.static(clientBuildPath))
   
   // Catch-all para routing del SPA - DEBE estar al final
   app.get('*', (_req, res) => {
-    res.sendFile(path.join(clientBuildPath, 'index.html'))
+    const indexPath = path.join(clientBuildPath, 'index.html')
+    res.sendFile(indexPath)
   })
 } else {
   // Solo en desarrollo - redireccionar a Vite dev server
