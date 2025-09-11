@@ -15,7 +15,7 @@ export default function Hero() {
               Conocé nuestras propiedades y recibí asesoramiento personalizado para comprar, vender o alquilar en Ramallo.
             </span>
             <span className="d-md-none">
-              Propiedades en Entre Ríos. Asesoramiento personalizado para comprar, vender o alquilar.
+              Propiedades en Ramallo y alrededores. Asesoramiento personalizado para comprar, vender o alquilar.
             </span>
           </p>
         </Container>
