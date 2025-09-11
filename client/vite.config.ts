@@ -10,7 +10,7 @@ export default defineConfig({
     hmr: {
       clientPort: 5000,
     },
-    allowedHosts: 'all',
+    allowedHosts: true,
     proxy: {
       '/api': {
         target: 'http://localhost:4000',
