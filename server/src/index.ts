@@ -21,11 +21,11 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'inmobiliaria2024'
 fs.mkdirSync(DATA_DIR, { recursive: true })
 fs.mkdirSync(UPLOADS_DIR, { recursive: true })
 
-// Configuración CORS para producción
+// Configuración CORS para producción y Replit
 const corsOptions = {
   origin: isProduction 
-    ? ['https://inmobiliaria-frontend.onrender.com', /\.onrender\.com$/]
-    : ['http://localhost:5000', 'http://localhost:5001'],
+    ? ['https://inmobiliaria-frontend.onrender.com', /\.onrender\.com$/, /\.replit\.dev$/, /\.replit\.app$/]
+    : ['http://localhost:5000', 'http://localhost:5001', 'http://127.0.0.1:5000', /\.replit\.dev$/, /\.replit\.app$/],
   credentials: true,
   optionsSuccessStatus: 200
 }
@@ -103,10 +103,6 @@ function authenticateToken(req: any, res: any, next: any) {
     next()
   })
 }
-
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true })
-})
 
 // Ruta de login
 app.post('/api/login', (req, res) => {
@@ -253,9 +249,8 @@ app.get('/api/health', (req, res) => {
 
 // 📌 Catch-all route para redireccionar al frontend (solo en desarrollo)
 if (!isProduction) {
-  app.get('*', (_req, res) => {
-    const clientUrl = 'http://localhost:5000'
-    res.redirect(clientUrl + _req.originalUrl)
+  app.get('/', (_req, res) => {
+    res.redirect('http://localhost:5000/')
   })
 }
 
