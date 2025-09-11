@@ -15,7 +15,7 @@ export default function About() {
           <Col md={6}>
             <h2 className="mb-3">Nosotros</h2>
             <p className="text-secondary">
-              Somos una inmobiliaria de Entre Ríos con trato humano, profesional y transparente. Nuestro objetivo es
+              Somos una inmobiliaria de Ramallo con trato humano, profesional y transparente. Nuestro objetivo es
               ayudarte a encontrar la propiedad ideal y acompañarte en cada decisión.
             </p>
             <Button className="btn-glacier">Conocé nuestras propiedades</Button>
