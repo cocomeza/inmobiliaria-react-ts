@@ -41,11 +41,17 @@ const devAdminPassword = ADMIN_PASSWORD || 'inmobiliaria2024'
 fs.mkdirSync(DATA_DIR, { recursive: true })
 fs.mkdirSync(UPLOADS_DIR, { recursive: true })
 
-// Configuración CORS para producción y Replit
+// Configuración CORS para producción (Railway + otros)
 const corsOptions = {
   origin: isProduction 
-    ? ['https://inmobiliaria-frontend.onrender.com', /\.onrender\.com$/, /\.replit\.dev$/, /\.replit\.app$/]
-    : ['http://localhost:5000', 'http://localhost:5001', 'http://127.0.0.1:5000', /\.replit\.dev$/, /\.replit\.app$/],
+    ? [
+        /\.railway\.app$/, 
+        /\.onrender\.com$/, 
+        /\.replit\.dev$/, 
+        /\.replit\.app$/,
+        'https://inmobiliaria-frontend.onrender.com'
+      ]
+    : ['http://localhost:5000', 'http://localhost:5001', 'http://127.0.0.1:5000', /\.replit\.dev$/, /\.replit\.app$/, /\.railway\.app$/],
   credentials: true,
   optionsSuccessStatus: 200
 }
