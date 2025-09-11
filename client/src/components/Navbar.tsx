@@ -1,4 +1,4 @@
-import { Container, Nav, Navbar as BsNavbar } from 'react-bootstrap'
+gimport { Container, Nav, Navbar as BsNavbar } from 'react-bootstrap'
 import { Link, useRoute } from 'wouter'
 
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
@@ -16,7 +16,7 @@ export default function Navbar() {
       <Container>
         <BsNavbar.Brand as={Link} href="/" className="fw-semibold d-block">
           <span className="d-none d-sm-inline">Diego Nadal Inmobiliaria</span>
-          <span className="d-inline d-sm-none">DN Inmobiliaria</span>
+          <span className="d-inline d-sm-none">Diego Nadal Inmobiliaria</span>
         </BsNavbar.Brand>
         <BsNavbar.Toggle aria-controls="basic-navbar-nav" />
         <BsNavbar.Collapse id="basic-navbar-nav">
