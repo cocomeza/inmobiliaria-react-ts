@@ -23,9 +23,16 @@ export default function Login() {
     }
 
     try {
+      // Normalizar datos antes de enviar para evitar problemas con móviles
+      const normalizedUsername = username.trim().toLowerCase()
+      const normalizedPassword = password.trim()
+      
       const res = await apiRequest('/api/login', {
         method: 'POST',
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ 
+          username: normalizedUsername, 
+          password: normalizedPassword 
+        }),
       })
 
       if (!res.ok) {
@@ -77,6 +84,10 @@ export default function Login() {
                     disabled={loading}
                     className="form-control-lg py-3"
                     autoComplete="username"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
+                    data-testid="input-username"
                   />
                 </Form.Group>
                 
@@ -92,6 +103,9 @@ export default function Login() {
                       disabled={loading}
                       className="form-control-lg py-3"
                       autoComplete="current-password"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck="false"
                       data-testid="input-password"
                     />
                     <Button
