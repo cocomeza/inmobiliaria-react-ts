@@ -139,12 +139,12 @@ app.post('/api/login', (req, res) => {
   const currentAdminPassword = isProduction ? ADMIN_PASSWORD! : devAdminPassword
   const currentJwtSecret = isProduction ? JWT_SECRET! : devJwtSecret
   
-  // Normalizar credenciales para comparación consistente
-  const normalize = (s: string) => s.normalize('NFKC').trim()
-  const inputUsername = normalize(username).toLowerCase()
-  const inputPassword = normalize(password)
-  const adminUsername = normalize(currentAdminUsername).toLowerCase()
-  const adminPassword = normalize(currentAdminPassword)
+  // Normalizar credenciales para comparación consistente (incluye remover comillas)
+  const sanitize = (s: string) => s.replace(/^['"]|['"]$/g, '').normalize('NFKC').trim()
+  const inputUsername = sanitize(username).toLowerCase()
+  const inputPassword = sanitize(password)
+  const adminUsername = sanitize(currentAdminUsername).toLowerCase()
+  const adminPassword = sanitize(currentAdminPassword)
   
   // Debug temporal para Railway (remover después de solucionar)
   if (isProduction) {
