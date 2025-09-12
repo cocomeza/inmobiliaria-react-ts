@@ -1,26 +1,51 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRoute } from 'wouter'
 import { Container, Row, Col, Carousel } from 'react-bootstrap'
-import data from '../data/properties.json'
+import { useQuery } from '@tanstack/react-query'
+import { apiRequest, getImageUrl } from '../lib/api'
 import type { PropertyItem } from '../components/PropertyCard'
-// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-// import { icon } from 'leaflet'
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { icon } from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
-// Temporalmente deshabilitado el mapa para resolver errores de build
-// const defaultIcon = icon({
-//   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-//   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-//   iconAnchor: [12, 41],
-//   popupAnchor: [0, -28],
-// })
+// Icono personalizado para el marcador
+const defaultIcon = icon({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconAnchor: [12, 41],
+  popupAnchor: [0, -28],
+})
 
 export default function PropertyDetail() {
   const [, params] = useRoute('/propiedad/:id')
-  const item = useMemo(() => (data as PropertyItem[]).find((p) => p.id === params?.id), [params])
+  
+  // Usar API para obtener propiedades actualizadas
+  const { data: properties = [], isLoading } = useQuery({
+    queryKey: ['/api/properties'],
+    queryFn: async () => {
+      const res = await apiRequest('/api/properties')
+      return await res.json() as PropertyItem[]
+    }
+  })
+  
+  const item = properties.find((p) => p.id === params?.id)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
+
+  if (isLoading) {
+    return (
+      <Container className="py-5">
+        <div className="text-center">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <p className="mt-2">Cargando propiedad...</p>
+        </div>
+      </Container>
+    )
+  }
 
   if (!item) {
     return (
@@ -50,7 +75,7 @@ export default function PropertyDetail() {
               >
                 {item.images.map((src, idx) => (
                   <Carousel.Item key={idx}>
-                    <img src={src} alt={`${item.title} ${idx + 1}`} className="d-block w-100" />
+                    <img src={getImageUrl(src)} alt={`${item.title} ${idx + 1}`} className="d-block w-100" />
                   </Carousel.Item>
                 ))}
               </Carousel>
@@ -65,7 +90,7 @@ export default function PropertyDetail() {
                     style={{ cursor: 'pointer' }}
                   >
                     <img
-                      src={src}
+                      src={getImageUrl(src)}
                       alt={`thumb ${idx + 1}`}
                       style={{ width: 96, height: 64, objectFit: 'cover', borderRadius: 6, border: active === idx ? '2px solid var(--color-glacier)' : '2px solid transparent' }}
                     />
@@ -81,17 +106,44 @@ export default function PropertyDetail() {
         <Col md={5}>
           <h1 className="h3">{item.title}</h1>
           <div className="mb-3">{new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(item.priceUsd)}</div>
+          {/* Mapa interactivo con Leaflet */}
           <div className="ratio ratio-4x3 rounded overflow-hidden">
-            <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3327.087951976268!2d-60.06567572545429!3d-33.499088773370275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95b9e370700a471f%3A0x40c71e9083743252!2sBelgrano%20938%2C%20B2914%20Villa%20Ramallo%2C%20Provincia%20de%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1757591393054!5m2!1ses-419!2sar" 
-              width="100%" 
-              height="100%" 
-              style={{border: 0}} 
-              allowFullScreen={true} 
-              loading="lazy" 
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Ubicación de la propiedad"
-            />
+            {item.lat && item.lng ? (
+              <MapContainer
+                center={[item.lat!, item.lng!]}
+                zoom={15}
+                scrollWheelZoom={false}
+                style={{ height: '100%', width: '100%', borderRadius: '0.375rem' }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={[item.lat!, item.lng!]} icon={defaultIcon}>
+                  <Popup>
+                    <div>
+                      <strong>{item.title}</strong><br />
+                      {item.address && <>{item.address}<br /></>}
+                      <span className="text-success fw-bold">
+                        {new Intl.NumberFormat('es-AR', { 
+                          style: 'currency', 
+                          currency: 'USD', 
+                          maximumFractionDigits: 0 
+                        }).format(item.priceUsd)}
+                      </span>
+                    </div>
+                  </Popup>
+                </Marker>
+              </MapContainer>
+            ) : (
+              <div className="d-flex align-items-center justify-content-center bg-light h-100">
+                <div className="text-center text-muted">
+                  <i className="fas fa-map-marker-alt fa-2x mb-2"></i>
+                  <p className="mb-0">Ubicación no disponible</p>
+                  <small>Coordenadas no configuradas</small>
+                </div>
+              </div>
+            )}
           </div>
         </Col>
       </Row>

@@ -1,19 +1,26 @@
 import { Card, Badge } from 'react-bootstrap'
 import { Link } from 'wouter'
+import { getImageUrl } from '../lib/api'
 
 export interface PropertyItem {
   id: string
   title: string
-  description: string
+  description?: string
   priceUsd: number
   images: string[]
-  type: string
-  status: 'En venta' | 'En alquiler'
+  type?: string
+  status?: 'En venta' | 'En alquiler'
+  address?: string
+  bedrooms?: number
+  bathrooms?: number
+  lat?: number
+  lng?: number
+  featured?: boolean
 }
 
 export default function PropertyCard({ item }: { item: PropertyItem }) {
   const price = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(item.priceUsd)
-  const cover = item.images?.[0] ?? 'https://placehold.co/800x600/png'
+  const cover = getImageUrl(item.images?.[0])
   return (
     <Link href={`/propiedad/${item.id}`}>
       <Card className="h-100 shadow-sm card-hover" data-aos="fade-up" as="div" role="button">

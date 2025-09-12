@@ -32,6 +32,7 @@
     "priceUsd": 350000,
     "images": [],
     "featured": true,
-    "type": "Casa"
+    "type": "Casa",
+    "status": "En venta"
   }
 ]
