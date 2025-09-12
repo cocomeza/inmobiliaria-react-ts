@@ -69,6 +69,15 @@ export default function Admin() {
       setError('El precio debe ser un número válido')
       return
     }
+    // Validar coordenadas si están presentes
+    if (editing.lat != null && (editing.lat < -90 || editing.lat > 90)) {
+      setError('La latitud debe estar entre -90 y 90')
+      return
+    }
+    if (editing.lng != null && (editing.lng < -180 || editing.lng > 180)) {
+      setError('La longitud debe estar entre -180 y 180')
+      return
+    }
     try {
       const method = editing.id ? 'PUT' : 'POST'
       const url = editing.id ? `/api/properties/${editing.id}` : '/api/properties'
@@ -414,7 +423,7 @@ export default function Admin() {
                       placeholder="-34.6118" 
                       className="form-control-lg"
                     />
-                    <Form.Text className="text-muted small">Ej: -34.6118 (Buenos Aires)</Form.Text>
+                    <Form.Text className="text-muted small">Ej: -34.6118 (rango: -90 a 90)</Form.Text>
                   </Form.Group>
                 </Col>
                 <Col xs={12} sm={6} md={3}>
@@ -428,7 +437,7 @@ export default function Admin() {
                       placeholder="-58.3960" 
                       className="form-control-lg"
                     />
-                    <Form.Text className="text-muted small">Ej: -58.3960 (Buenos Aires)</Form.Text>
+                    <Form.Text className="text-muted small">Ej: -58.3960 (rango: -180 a 180)</Form.Text>
                   </Form.Group>
                 </Col>
                 <Col xs={12} sm={6}>

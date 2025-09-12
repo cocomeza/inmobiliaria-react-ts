@@ -59,7 +59,7 @@ export default function PropertyCard({ item }: { item: PropertyItem }) {
           <div className="fw-semibold text-armadillo mb-2 fs-6">{price}</div>
           
           {/* Mapa pequeño si hay coordenadas */}
-          {item.lat && item.lng && (
+          {item.lat != null && item.lng != null && (
             <div className="mb-2" style={{ height: '120px', borderRadius: '6px', overflow: 'hidden' }}>
               <MapContainer
                 center={[item.lat, item.lng] as any}
@@ -72,6 +72,7 @@ export default function PropertyCard({ item }: { item: PropertyItem }) {
                 touchZoom={false}
               >
                 <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <Marker position={[item.lat, item.lng] as any} icon={defaultIcon as any} />
