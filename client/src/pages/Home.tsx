@@ -1,13 +1,26 @@
 import { Container, Row, Col } from 'react-bootstrap'
+import { useQuery } from '@tanstack/react-query'
 import Hero from '../components/Hero'
 import Services from '../components/Services'
 import About from '../components/About'
 import PropertyCard from '../components/PropertyCard'
 import type { PropertyItem } from '../components/PropertyCard'
-import data from '../data/properties.json'
+import { apiRequest } from '../lib/api'
 
 export default function Home() {
-  const featured = (data as PropertyItem[]).slice(0, 3)
+  // Usar API en lugar de archivo estático para mostrar propiedades actualizadas
+  const { data: properties = [] } = useQuery({
+    queryKey: ['/api/properties'],
+    queryFn: async () => {
+      const res = await apiRequest('/api/properties')
+      return await res.json() as PropertyItem[]
+    }
+  })
+
+  // Mostrar propiedades destacadas o las primeras 3 si no hay destacadas
+  const featuredList = properties.filter(p => p.featured)
+  const featured = featuredList.length > 0 ? featuredList.slice(0, 3) : properties.slice(0, 3)
+  
   return (
     <>
       <Hero />

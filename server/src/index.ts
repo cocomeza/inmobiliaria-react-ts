@@ -279,20 +279,22 @@ app.get('/api/health', (req, res) => {
   })
 })
 
-// 🚨 ENDPOINT DE DEBUG TEMPORAL - ELIMINAR EN PRODUCCIÓN
-app.get('/api/debug-auth', (req, res) => {
-  const debug = {
-    isProduction,
-    hasJwtSecret: !!JWT_SECRET,
-    hasAdminUsername: !!ADMIN_USERNAME,
-    hasAdminPassword: !!ADMIN_PASSWORD,
-    adminUsername: isProduction ? '***hidden***' : devAdminUsername,
-    environment: process.env.NODE_ENV,
-    allEnvVars: Object.keys(process.env).filter(key => key.includes('ADMIN') || key.includes('JWT')),
-    timestamp: new Date().toISOString()
-  }
-  res.json(debug)
-})
+// 🚨 ENDPOINT DE DEBUG - SOLO EN DESARROLLO
+if (!isProduction) {
+  app.get('/api/debug-auth', (req, res) => {
+    const debug = {
+      isProduction,
+      hasJwtSecret: !!JWT_SECRET,
+      hasAdminUsername: !!ADMIN_USERNAME,
+      hasAdminPassword: !!ADMIN_PASSWORD,
+      adminUsername: devAdminUsername,
+      environment: process.env.NODE_ENV,
+      allEnvVars: Object.keys(process.env).filter(key => key.includes('ADMIN') || key.includes('JWT')),
+      timestamp: new Date().toISOString()
+    }
+    res.json(debug)
+  })
+}
 
 // 📌 SOLUCION TEMPORAL: Backend solo como API
 // Para Railway deployment: usar servicios separados en lugar de servir frontend desde backend

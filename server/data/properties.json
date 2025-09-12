@@ -19,7 +19,9 @@
     "title": "Casa de prueba oLK3Up - EDITADA",
     "description": "Una hermosa casa de prueba para verificar la funcionalidad",
     "priceUsd": 250000,
-    "images": [],
+    "images": [
+      "/uploads/1757661240692_moderna-casa-de-lujo-con-piscina.jpg"
+    ],
     "featured": false,
     "type": "Casa"
   }

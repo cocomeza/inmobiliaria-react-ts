@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Button, Col, Container, Form, Row, Alert } from 'react-bootstrap'
+import { Button, Col, Container, Form, Row, Alert, InputGroup } from 'react-bootstrap'
 import { useLocation } from 'wouter'
 import { apiRequest } from '../lib/api'
 
 export default function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [, setLocation] = useLocation()
@@ -81,16 +82,30 @@ export default function Login() {
                 
                 <Form.Group className="mb-4">
                   <Form.Label className="fw-semibold small mb-2">Contraseña</Form.Label>
-                  <Form.Control
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Ingresá tu contraseña"
-                    required
-                    disabled={loading}
-                    className="form-control-lg py-3"
-                    autoComplete="current-password"
-                  />
+                  <InputGroup>
+                    <Form.Control
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Ingresá tu contraseña"
+                      required
+                      disabled={loading}
+                      className="form-control-lg py-3"
+                      autoComplete="current-password"
+                      data-testid="input-password"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline-secondary"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={loading}
+                      className="px-3"
+                      title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                      data-testid="button-toggle-password"
+                    >
+                      {showPassword ? "👁️" : "🙈"}
+                    </Button>
+                  </InputGroup>
                 </Form.Group>
                 
                 <Button 
