@@ -2,13 +2,15 @@
 
 This is a comprehensive real estate web application for Diego Nadal Inmobiliaria, built as a modern React-based property listing and management platform. The application serves the Argentine real estate market with localized content, Spanish language interface, and USD pricing. It features a responsive design with property browsing, filtering, detailed views, and administrative capabilities for managing listings.
 
-## Recent Changes (September 11, 2025)
-- **GitHub Import Setup Completed**: Successfully imported and configured for Replit environment
-- **Security Improvements**: Removed hardcoded secrets, added environment variable validation for production
-- **Replit Configuration**: Added `allowedHosts: 'all'` to Vite config for proxy support
-- **Dependencies Fixed**: Added missing `concurrently` dependency, resolved multer version conflicts
-- **Production Routing**: Fixed SPA catch-all routing pattern for production deployment
-- **Deployment Ready**: Configured autoscale deployment with proper build and start commands
+## Recent Changes (September 12, 2025)
+- **Railway Deployment Completed**: Successfully deployed to production on Railway platform
+- **Two-Service Architecture**: Separated frontend and backend into independent Railway services
+- **Backend**: https://inmobiliaria-fullstack-production-069c.up.railway.app
+- **Frontend**: https://inmobiliaria-react-ts-production.up.railway.app
+- **Environment Variables**: Configured JWT_SECRET, ADMIN_USERNAME, ADMIN_PASSWORD for backend
+- **Node.js Version**: Fixed Node v20 requirement for Vite 7 compatibility
+- **Package Dependencies**: Resolved package-lock.json sync issues and missing dependencies
+- **CORS Configuration**: Updated for Railway domains (/.railway.app$/) support
 
 # User Preferences
 
