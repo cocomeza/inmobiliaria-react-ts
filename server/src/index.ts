@@ -35,7 +35,7 @@ if (isProduction && (!JWT_SECRET || !ADMIN_USERNAME || !ADMIN_PASSWORD)) {
 // Development fallbacks (only for development)
 const devJwtSecret = JWT_SECRET || 'dev_secret_change_in_production'
 const devAdminUsername = ADMIN_USERNAME || 'admin'
-const devAdminPassword = ADMIN_PASSWORD || 'admin123'
+const devAdminPassword = ADMIN_PASSWORD || '123'
 
 // Ensure directories exist
 fs.mkdirSync(DATA_DIR, { recursive: true })
