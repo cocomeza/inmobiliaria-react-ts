@@ -1,6 +1,6 @@
 /**
  * Configuración de la URL base del API
- * En desarrollo: usa localhost:4000
+ * En desarrollo: usa rutas relativas (proxy de Vite)
  * En producción: usa rutas relativas (mismo dominio)
  */
 export function getApiUrl(): string {
@@ -9,12 +9,7 @@ export function getApiUrl(): string {
     return import.meta.env.VITE_API_URL
   }
   
-  // En desarrollo (modo dev), usar localhost
-  if (import.meta.env.DEV) {
-    return 'http://localhost:4000'
-  }
-  
-  // En producción, usar rutas relativas (mismo dominio)
+  // Siempre usar rutas relativas para que funcione el proxy
   return ''
 }
 
