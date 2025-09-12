@@ -12,6 +12,7 @@ type Property = {
   type?: string
   status?: string
   images: string[]
+  featured?: boolean
 }
 
 export default function Admin() {
@@ -51,7 +52,7 @@ export default function Admin() {
   }, [])
 
   function startNew() {
-    setEditing({ id: '', title: '', priceUsd: 0, images: [] })
+    setEditing({ id: '', title: '', priceUsd: 0, images: [], featured: false })
   }
 
   async function saveItem(e: React.FormEvent<HTMLFormElement>) {
@@ -84,6 +85,7 @@ export default function Admin() {
           type: editing.type,
           status: editing.status,
           images: editing.images ?? [],
+          featured: Boolean(editing.featured),
         }),
       })
       if (!res.ok) {
@@ -397,6 +399,21 @@ export default function Admin() {
                       <option value="Reservado">Reservado</option>
                       <option value="Vendido">Vendido</option>
                     </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col xs={12} sm={6}>
+                  <Form.Group>
+                    <Form.Label className="fw-semibold">Opciones</Form.Label>
+                    <div className="d-flex align-items-center gap-3 mt-2">
+                      <Form.Check 
+                        type="switch"
+                        id="featured-switch"
+                        label="⭐ Destacada (aparece en Home)"
+                        checked={Boolean(editing.featured)}
+                        onChange={(e) => setEditing({ ...(editing as Property), featured: e.target.checked })}
+                        className="form-check-lg"
+                      />
+                    </div>
                   </Form.Group>
                 </Col>
                 <Col xs={12} sm={6}>

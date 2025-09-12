@@ -36,5 +36,17 @@
     "featured": true,
     "type": "Casa",
     "status": "En venta"
+  },
+  {
+    "id": "1757692420296",
+    "title": "terreno de 50 x 50",
+    "description": "excelente zona",
+    "priceUsd": 2000,
+    "images": [
+      "/uploads/1757692410623_paisaje-de-campo.jpg"
+    ],
+    "featured": false,
+    "type": "Terreno",
+    "status": "En venta"
   }
 ]
