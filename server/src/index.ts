@@ -134,12 +134,19 @@ app.post('/api/login', (req, res) => {
     return res.status(400).json({ message: 'Usuario y contraseña requeridos' })
   }
 
-  // Verificar credenciales
+  // Verificar credenciales con normalización
   const currentAdminUsername = isProduction ? ADMIN_USERNAME! : devAdminUsername
   const currentAdminPassword = isProduction ? ADMIN_PASSWORD! : devAdminPassword
   const currentJwtSecret = isProduction ? JWT_SECRET! : devJwtSecret
   
-  if (username === currentAdminUsername && password === currentAdminPassword) {
+  // Normalizar credenciales para comparación consistente
+  const normalize = (s: string) => s.normalize('NFKC').trim()
+  const inputUsername = normalize(username).toLowerCase()
+  const inputPassword = normalize(password)
+  const adminUsername = normalize(currentAdminUsername).toLowerCase()
+  const adminPassword = normalize(currentAdminPassword)
+  
+  if (inputUsername === adminUsername && inputPassword === adminPassword) {
     const user = { username: currentAdminUsername, role: 'admin' }
     const token = jwt.sign(user, currentJwtSecret, { expiresIn: '24h' })
     
