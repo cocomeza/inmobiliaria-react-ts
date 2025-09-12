@@ -35,7 +35,7 @@ if (isProduction && (!JWT_SECRET || !ADMIN_USERNAME || !ADMIN_PASSWORD)) {
 // Development fallbacks (only for development)
 const devJwtSecret = JWT_SECRET || 'dev_secret_change_in_production'
 const devAdminUsername = ADMIN_USERNAME || 'admin'
-const devAdminPassword = ADMIN_PASSWORD || 'inmobiliaria2024'
+const devAdminPassword = ADMIN_PASSWORD || 'admin123'
 
 // Ensure directories exist
 fs.mkdirSync(DATA_DIR, { recursive: true })
@@ -145,6 +145,18 @@ app.post('/api/login', (req, res) => {
   const inputPassword = normalize(password)
   const adminUsername = normalize(currentAdminUsername).toLowerCase()
   const adminPassword = normalize(currentAdminPassword)
+  
+  // Debug temporal para Railway (remover después de solucionar)
+  if (isProduction) {
+    console.log('LOGIN DEBUG:', {
+      usernameMatch: inputUsername === adminUsername,
+      passwordMatch: inputPassword === adminPassword,
+      inputUsernameLength: inputUsername.length,
+      adminUsernameLength: adminUsername.length,
+      inputPasswordLength: inputPassword.length,
+      adminPasswordLength: adminPassword.length
+    })
+  }
   
   if (inputUsername === adminUsername && inputPassword === adminPassword) {
     const user = { username: currentAdminUsername, role: 'admin' }
