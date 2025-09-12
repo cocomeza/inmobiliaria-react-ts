@@ -71,8 +71,6 @@ type Property = {
   address?: string
   bedrooms?: number
   bathrooms?: number
-  lat?: number
-  lng?: number
   images: string[]
   featured?: boolean
   type?: string
@@ -106,8 +104,6 @@ if (!fs.existsSync(dataFilePath)) {
       address: 'Belgrano 938, Villa Ramallo, Buenos Aires',
       bedrooms: 2,
       bathrooms: 1,
-      lat: -33.499088773370275,
-      lng: -60.06567572545429,
       images: [],
       featured: true,
       type: 'Departamento',
@@ -192,8 +188,6 @@ app.post('/api/properties', authenticateToken, (req, res) => {
     address: body.address ? String(body.address) : undefined,
     bedrooms: body.bedrooms != null ? Number(body.bedrooms) : undefined,
     bathrooms: body.bathrooms != null ? Number(body.bathrooms) : undefined,
-    lat: body.lat != null ? Number(body.lat) : undefined,
-    lng: body.lng != null ? Number(body.lng) : undefined,
     images: Array.isArray(body.images) ? body.images.map(String) : [],
     featured: Boolean(body.featured),
     type: body.type ? String(body.type) : undefined,
@@ -221,8 +215,6 @@ app.put('/api/properties/:id', authenticateToken, (req, res) => {
     priceUsd: body.priceUsd != null ? Number(body.priceUsd) : prev.priceUsd,
     bedrooms: body.bedrooms != null ? Number(body.bedrooms) : prev.bedrooms,
     bathrooms: body.bathrooms != null ? Number(body.bathrooms) : prev.bathrooms,
-    lat: body.lat != null ? Number(body.lat) : prev.lat,
-    lng: body.lng != null ? Number(body.lng) : prev.lng,
     featured: body.featured != null ? Boolean(body.featured) : prev.featured,
     images: Array.isArray(body.images) ? body.images.map(String) : prev.images,
   }

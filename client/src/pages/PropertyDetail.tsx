@@ -4,17 +4,7 @@ import { Container, Row, Col, Carousel } from 'react-bootstrap'
 import { useQuery } from '@tanstack/react-query'
 import { apiRequest, getImageUrl } from '../lib/api'
 import type { PropertyItem } from '../components/PropertyCard'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import { icon } from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 
-// Icono personalizado para el marcador
-const defaultIcon = icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconAnchor: [12, 41],
-  popupAnchor: [0, -28],
-})
 
 export default function PropertyDetail() {
   const [, params] = useRoute('/propiedad/:id')
@@ -106,45 +96,16 @@ export default function PropertyDetail() {
         <Col md={5}>
           <h1 className="h3">{item.title}</h1>
           <div className="mb-3">{new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(item.priceUsd)}</div>
-          {/* Mapa interactivo con Leaflet */}
-          <div className="ratio ratio-4x3 rounded overflow-hidden">
-            {item.lat && item.lng ? (
-              <MapContainer
-                center={[item.lat!, item.lng!]}
-                zoom={15}
-                scrollWheelZoom={false}
-                style={{ height: '100%', width: '100%', borderRadius: '0.375rem' }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <Marker position={[item.lat!, item.lng!]} icon={defaultIcon}>
-                  <Popup>
-                    <div>
-                      <strong>{item.title}</strong><br />
-                      {item.address && <>{item.address}<br /></>}
-                      <span className="text-success fw-bold">
-                        {new Intl.NumberFormat('es-AR', { 
-                          style: 'currency', 
-                          currency: 'USD', 
-                          maximumFractionDigits: 0 
-                        }).format(item.priceUsd)}
-                      </span>
-                    </div>
-                  </Popup>
-                </Marker>
-              </MapContainer>
-            ) : (
-              <div className="d-flex align-items-center justify-content-center bg-light h-100">
-                <div className="text-center text-muted">
-                  <i className="fas fa-map-marker-alt fa-2x mb-2"></i>
-                  <p className="mb-0">Ubicación no disponible</p>
-                  <small>Coordenadas no configuradas</small>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Información de ubicación */}
+          {item.address && (
+            <div className="bg-light p-3 rounded mb-3">
+              <h5 className="h6 text-muted mb-2">
+                <i className="fas fa-map-marker-alt me-2"></i>
+                Ubicación
+              </h5>
+              <p className="mb-0">{item.address}</p>
+            </div>
+          )}
         </Col>
       </Row>
     </Container>

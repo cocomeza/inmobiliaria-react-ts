@@ -12,8 +12,6 @@ type Property = {
   type?: string
   status?: string
   images: string[]
-  lat?: number
-  lng?: number
 }
 
 export default function Admin() {
@@ -53,7 +51,7 @@ export default function Admin() {
   }, [])
 
   function startNew() {
-    setEditing({ id: '', title: '', priceUsd: 0, images: [], lat: undefined, lng: undefined })
+    setEditing({ id: '', title: '', priceUsd: 0, images: [] })
   }
 
   async function saveItem(e: React.FormEvent<HTMLFormElement>) {
@@ -67,15 +65,6 @@ export default function Admin() {
     const priceValue = Number(editing.priceUsd)
     if (Number.isNaN(priceValue) || priceValue < 0) {
       setError('El precio debe ser un número válido')
-      return
-    }
-    // Validar coordenadas si están presentes
-    if (editing.lat != null && (editing.lat < -90 || editing.lat > 90)) {
-      setError('La latitud debe estar entre -90 y 90')
-      return
-    }
-    if (editing.lng != null && (editing.lng < -180 || editing.lng > 180)) {
-      setError('La longitud debe estar entre -180 y 180')
       return
     }
     try {
@@ -95,8 +84,6 @@ export default function Admin() {
           type: editing.type,
           status: editing.status,
           images: editing.images ?? [],
-          lat: editing.lat,
-          lng: editing.lng,
         }),
       })
       if (!res.ok) {
@@ -410,34 +397,6 @@ export default function Admin() {
                       <option value="Reservado">Reservado</option>
                       <option value="Vendido">Vendido</option>
                     </Form.Select>
-                  </Form.Group>
-                </Col>
-                <Col xs={12} sm={6} md={3}>
-                  <Form.Group>
-                    <Form.Label className="fw-semibold">Latitud</Form.Label>
-                    <Form.Control 
-                      type="number" 
-                      step="any"
-                      value={editing.lat ?? ''} 
-                      onChange={(e) => setEditing({ ...(editing as Property), lat: e.target.value ? Number(e.target.value) : undefined })} 
-                      placeholder="-34.6118" 
-                      className="form-control-lg"
-                    />
-                    <Form.Text className="text-muted small">Ej: -34.6118 (rango: -90 a 90)</Form.Text>
-                  </Form.Group>
-                </Col>
-                <Col xs={12} sm={6} md={3}>
-                  <Form.Group>
-                    <Form.Label className="fw-semibold">Longitud</Form.Label>
-                    <Form.Control 
-                      type="number" 
-                      step="any"
-                      value={editing.lng ?? ''} 
-                      onChange={(e) => setEditing({ ...(editing as Property), lng: e.target.value ? Number(e.target.value) : undefined })} 
-                      placeholder="-58.3960" 
-                      className="form-control-lg"
-                    />
-                    <Form.Text className="text-muted small">Ej: -58.3960 (rango: -180 a 180)</Form.Text>
                   </Form.Group>
                 </Col>
                 <Col xs={12} sm={6}>
