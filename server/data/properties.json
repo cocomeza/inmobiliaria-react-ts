@@ -9,7 +9,9 @@
     "bathrooms": 1,
     "lat": -34.573,
     "lng": -58.419,
-    "images": [],
+    "images": [
+      "/uploads/1757692143686_representacion-3d-del-modelo-de-casa.jpg"
+    ],
     "featured": true,
     "type": "Departamento",
     "status": "En venta"
