@@ -70,8 +70,13 @@ export default function Admin() {
     try {
       const method = editing.id ? 'PUT' : 'POST'
       const url = editing.id ? `/api/properties/${editing.id}` : '/api/properties'
+      const token = localStorage.getItem('adminToken')
       const res = await apiRequest(url, {
         method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           title: editing.title,
           description: editing.description,
