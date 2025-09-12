@@ -25,7 +25,8 @@
       "/uploads/1757661240692_moderna-casa-de-lujo-con-piscina.jpg"
     ],
     "featured": false,
-    "type": "Casa"
+    "type": "Casa",
+    "status": "En alquiler"
   },
   {
     "id": "1757661924099",
