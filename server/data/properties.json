@@ -24,5 +24,14 @@
     ],
     "featured": false,
     "type": "Casa"
+  },
+  {
+    "id": "1757661924099",
+    "title": "🏠 Nueva Casa de Prueba SYNC",
+    "description": "Esta propiedad debe aparecer inmediatamente en la página principal",
+    "priceUsd": 350000,
+    "images": [],
+    "featured": true,
+    "type": "Casa"
   }
 ]
