@@ -5,22 +5,43 @@ import { authService } from './authService.js';
 export const seedService = {
   async seedDatabase() {
     try {
+      // Only seed in development environment
+      const isProduction = process.env.NODE_ENV === 'production';
+      const allowSeeding = process.env.ALLOW_SEEDING === 'true';
+      
+      if (isProduction && !allowSeeding) {
+        console.log('🚫 Seeding deshabilitado en producción');
+        return;
+      }
+
       console.log('🌱 Iniciando seed de base de datos...');
 
       // Verificar si ya existe un admin
       const existingAdmin = await User.findOne({ role: 'admin' });
       
       if (!existingAdmin) {
+        // Get admin credentials from environment variables
+        const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@inmobiliaria.com';
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        
+        if (!adminPassword) {
+          console.error('❌ ADMIN_PASSWORD no está configurado en variables de entorno');
+          return;
+        }
+
         console.log('👤 Creando usuario administrador...');
         const adminResult = await authService.createUser({
-          username: 'admin',
-          email: 'admin@inmobiliaria.com',
-          password: 'admin123', // En producción esto debe cambiarse
+          username: adminUsername,
+          email: adminEmail,
+          password: adminPassword,
           role: 'admin'
         });
 
         if (adminResult.success) {
           console.log('✅ Usuario administrador creado correctamente');
+          console.log(`📧 Email: ${adminEmail}`);
+          console.log(`👤 Username: ${adminUsername}`);
         } else {
           console.error('❌ Error creando administrador:', adminResult.message);
         }

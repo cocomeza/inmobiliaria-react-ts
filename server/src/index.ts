@@ -1,6 +1,26 @@
+import dotenv from 'dotenv'
 import express, { Request, Response } from 'express'
 import cors from 'cors'
+import helmet from 'helmet'
+import rateLimit from 'express-rate-limit'
 import path from 'path'
+
+// Configurar dotenv con la ruta correcta
+const envPath = path.resolve(__dirname, '../../../.env')
+console.log('🔧 Cargando variables de entorno desde:', envPath)
+const result = dotenv.config({ path: envPath })
+
+// Fallback: también intentar desde la raíz del workspace
+if (result.error) {
+  const workspaceEnvPath = path.resolve(process.cwd(), '.env')
+  console.log('🔧 Intentando cargar desde workspace:', workspaceEnvPath)
+  dotenv.config({ path: workspaceEnvPath })
+}
+
+console.log('✅ Variables disponibles:', {
+  MONGO_URI: !!process.env.MONGO_URI,
+  JWT_SECRET: !!process.env.JWT_SECRET
+})
 import connectDB from './config/database.js'
 import { authenticateToken, requireAdmin, AuthRequest } from './middleware/auth.js'
 import { authService } from './services/authService.js'
@@ -36,6 +56,32 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.use(express.json({ limit: '10mb' }))
 
+// Security middlewares
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:", "http:"],
+      scriptSrc: ["'self'"],
+      connectSrc: ["'self'"]
+    }
+  },
+  crossOriginEmbedderPolicy: false
+}))
+
+// Rate limiting for login endpoint
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per windowMs
+  message: {
+    error: 'Demasiados intentos de login. Intenta nuevamente en 15 minutos.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
 // Conectar a MongoDB
 connectDB().then(() => {
   // Seed de la base de datos después de conectar
@@ -49,7 +95,7 @@ connectDB().then(() => {
 // RUTAS DE AUTENTICACIÓN
 // ========================
 
-app.post('/api/login', async (req: Request, res: Response) => {
+app.post('/api/login', loginLimiter, async (req: Request, res: Response) => {
   try {
     const { username, password } = req.body
 
