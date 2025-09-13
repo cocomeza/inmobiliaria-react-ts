@@ -388,10 +388,11 @@ if (isProduction) {
   })
 }
 
-// 🔥 CATCH-ALL PARA REACT ROUTER (DEBE IR AL FINAL)
+// 🔥 CATCH-ALL PARA REACT ROUTER (COMPATIBLE EXPRESS 5)
 if (isProduction) {
   // Para React Router - todas las rutas no API van al index.html
-  app.get('*', (req: Request, res: Response) => {
+  // Usar regex para compatibilidad con Express 5 + path-to-regexp v6
+  app.get(/^\/(?!api).*/, (req: Request, res: Response) => {
     const clientDistPath = path.join(__dirname, '../../client/dist')
     res.sendFile(path.join(clientDistPath, 'index.html'))
   })
