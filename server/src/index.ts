@@ -26,6 +26,7 @@ console.log('✅ Variables disponibles:', {
   MONGO_URI: !!process.env.MONGO_URI,
   JWT_SECRET: !!process.env.JWT_SECRET
 })
+
 import connectDB from './config/database.js'
 import { authenticateToken, requireAdmin, AuthRequest } from './middleware/auth.js'
 import { authService } from './services/authService.js'
@@ -390,7 +391,7 @@ if (isProduction) {
 }
 
 // Iniciar servidor
-app.listen(Number(PORT), '0.0.0.0', () => {
+const server = app.listen(Number(PORT), '0.0.0.0', async () => {
   console.log(`🚀 API escuchando en http://0.0.0.0:${PORT}`)
   console.log(`📊 Entorno: ${process.env.NODE_ENV || 'development'}`)
   console.log(`💾 Base de datos: MongoDB Atlas`)
@@ -398,7 +399,29 @@ app.listen(Number(PORT), '0.0.0.0', () => {
   if (!isProduction) {
     console.log(`🔄 Redirigiendo rutas no-API a http://localhost:5000`)
   }
+  
+  // Conectar a MongoDB después de que el servidor esté listo
+  await connectDB()
+  
+  // Realizar seeding después de conectar a la base de datos
+  await seedService.seedDatabase()
+  
+  console.log(`✅ Servidor completamente iniciado y listo para recibir requests`)
 }).on('error', (err) => {
   console.error('❌ Error starting server:', err)
   process.exit(1)
 })
+
+// Graceful shutdown para Railway
+process.on('SIGTERM', () => {
+  console.log('🔄 Recibiendo SIGTERM, cerrando servidor...')
+  server.close(() => {
+    console.log('✅ Servidor cerrado correctamente')
+    process.exit(0)
+  })
+})
+
+// Keep-alive para Railway
+setInterval(() => {
+  console.log(`❤️ Servidor activo en puerto ${PORT}`)
+}, 300000) // Cada 5 minutos
