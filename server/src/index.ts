@@ -381,27 +381,19 @@ if (isProduction) {
   console.log(`📂 Sirviendo archivos estáticos desde: ${clientDistPath}`)
   
   app.use(express.static(clientDistPath))
-  
-  // Para React Router - todas las rutas no API van al index.html
-  app.get('*', (req: Request, res: Response) => {
-    if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
-      res.sendFile(path.join(clientDistPath, 'index.html'))
-    } else {
-      // Endpoint de información API en /api
-      if (req.path === '/api') {
-        res.json({ 
-          message: 'API Inmobiliaria funcionando ✅ - MongoDB', 
-          health: '/api/health',
-          endpoints: ['/api/properties', '/api/login', '/api/contact'],
-          database: 'MongoDB Atlas'
-        })
-      }
-    }
-  })
 } else {
   // En desarrollo, redirigir al frontend de Vite
   app.get('/', (req: Request, res: Response) => {
     res.redirect('http://localhost:5000/')
+  })
+}
+
+// 🔥 CATCH-ALL PARA REACT ROUTER (DEBE IR AL FINAL)
+if (isProduction) {
+  // Para React Router - todas las rutas no API van al index.html
+  app.get('*', (req: Request, res: Response) => {
+    const clientDistPath = path.join(__dirname, '../../client/dist')
+    res.sendFile(path.join(clientDistPath, 'index.html'))
   })
 }
 
