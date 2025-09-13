@@ -5,16 +5,21 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import path from 'path'
 
-// Configurar dotenv con la ruta correcta
-const envPath = path.resolve(__dirname, '../../../.env')
-console.log('🔧 Cargando variables de entorno desde:', envPath)
-const result = dotenv.config({ path: envPath })
+// En producción, las variables vienen del entorno Railway
+if (process.env.NODE_ENV === 'production') {
+  console.log('🚀 Producción: usando variables de entorno de Railway')
+} else {
+  // En desarrollo, configurar dotenv con la ruta correcta
+  const envPath = path.resolve(__dirname, '../../../.env')
+  console.log('🔧 Desarrollo: cargando variables de entorno desde:', envPath)
+  const result = dotenv.config({ path: envPath })
 
-// Fallback: también intentar desde la raíz del workspace
-if (result.error) {
-  const workspaceEnvPath = path.resolve(process.cwd(), '.env')
-  console.log('🔧 Intentando cargar desde workspace:', workspaceEnvPath)
-  dotenv.config({ path: workspaceEnvPath })
+  // Fallback: también intentar desde la raíz del workspace
+  if (result.error) {
+    const workspaceEnvPath = path.resolve(process.cwd(), '.env')
+    console.log('🔧 Intentando cargar desde workspace:', workspaceEnvPath)
+    dotenv.config({ path: workspaceEnvPath })
+  }
 }
 
 console.log('✅ Variables disponibles:', {
